@@ -1,0 +1,10 @@
+Bundle-Name: EmployeeHiring-services-api
+Bundle-SymbolicName: com.deltafixes.api
+Bundle-Version: 1.0.0
+Export-Package:\
+	com.deltafixes.exception,\
+	com.deltafixes.model,\
+	com.deltafixes.service,\
+	com.deltafixes.service.persistence
+-check: EXPORTS
+-includeresource: META-INF/service.xml=../EmployeeHiring-services-service/service.xml

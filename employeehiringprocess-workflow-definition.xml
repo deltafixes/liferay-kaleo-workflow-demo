@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<workflow-definition
+	xmlns="urn:liferay.com:liferay-workflow_7.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:liferay.com:liferay-workflow_7.0.0 http://www.liferay.com/dtd/liferay-workflow-definition_7_0_0.xsd">
+	<name>EmployeeHiringProcess-workflow</name>
+	<version>1</version>
+	<state>
+		<name>created</name>
+		<metadata>
+			<![CDATA[{"xy":[90,105],"transitions":{"review":{"bendpoints":[]}}}]]>
+		</metadata>
+		<initial>true</initial>
+		<transitions>
+            <transition>
+                <name>review</name>
+                <target>HR Review</target>
+            </transition>
+		</transitions>
+	</state>
+	<task>
+		<name>HR Review</name>
+		<metadata>
+			<![CDATA[{"xy":[220,90],"transitions":{"approved":{"xy":[-38,3],"bendpoints":[[325,221]]}}}]]>
+		</metadata>
+		<actions>
+			<notification>
+				<name>New Candidate</name>
+				<template>Basic interrogation questions</template>
+				<template-language>freemarker</template-language>
+				<notification-type>user-notification</notification-type>
+				<execution-type>onAssignment</execution-type>
+			</notification>
+		</actions>
+		<assignments>
+			<roles>
+				<role>
+					<role-type>regular</role-type>
+					<name>HR</name>
+					<auto-create>false</auto-create>
+				</role>
+			</roles>
+		</assignments>
+		<transitions>
+			<transition>
+				<name>approved</name>
+				<target>Interviewer</target>
+			</transition>
+		</transitions>
+	</task>
+	<state>
+		<name>approved</name>
+		<metadata>
+			<![CDATA[{"xy":[570,105],"terminal":true}]]>
+		</metadata>
+		<actions>
+			<action>
+				<name>approve</name>
+				<script>
+					<![CDATA[
+                	import com.liferay.portal.kernel.workflow.WorkflowStatusManagerUtil;
+					import com.liferay.portal.kernel.workflow.WorkflowConstants;
+                	WorkflowStatusManagerUtil.updateStatus(WorkflowConstants.getLabelStatus("approved"), workflowContext);
+                ]]>
+				</script>
+				<script-language>groovy</script-language>
+				<execution-type>onEntry</execution-type>
+			</action>
+		</actions>
+	</state>
+	<task>
+		<name>Interviewer</name>
+		<metadata><![CDATA[{"xy":[390,90],"transitions":{"approved":{"xy":[-23,-17],"bendpoints":[]}}}]]></metadata>
+		<actions>
+			<notification>
+				<name>Take Interview</name>
+				<template>Take technical skill test</template>
+				<template-language>freemarker</template-language>
+				<notification-type>user-notification</notification-type>
+				<execution-type>onEntry</execution-type>
+			</notification>
+		</actions>
+		<assignments>
+			<roles>
+				<role>
+					<role-type>regular</role-type>
+					<name>Technical Specialist</name>
+				</role>
+			</roles>
+		</assignments>
+		<transitions>
+			<transition>
+				<name>reject</name>
+				<target>HR Review</target>
+			</transition>
+			<transition>
+				<name>approved</name>
+				<target>approved</target>
+			</transition>
+		</transitions>
+	</task>
+</workflow-definition>
